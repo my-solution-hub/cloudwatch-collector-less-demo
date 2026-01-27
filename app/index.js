@@ -1,16 +1,12 @@
 const express = require('express');
-const log4js = require('log4js');
+const winston = require('winston');
 
-log4js.configure({
-  appenders: { 
-    out: { type: 'stdout' }
-  },
-  categories: { 
-    default: { appenders: ['out'], level: 'info' }
-  }
+const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.json(),
+  transports: [new winston.transports.Console()]
 });
 
-const logger = log4js.getLogger();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -20,7 +16,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/health', (req, res) => {
-  logger.debug('Health check called');
+  logger.info('Health check called');
   res.json({ status: 'healthy' });
 });
 

@@ -1,0 +1,14 @@
+{
+  "name": "cloudwatch-otlp-demo",
+  "version": "1.0.0",
+  "description": "Node.js demo with CloudWatch OTLP integration",
+  "main": "index.js",
+  "scripts": {
+    "start": "node --require '@aws/aws-distro-opentelemetry-node-autoinstrumentation/register' index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "log4js": "^6.9.1",
+    "@aws/aws-distro-opentelemetry-node-autoinstrumentation": "^0.7.0"
+  }
+}

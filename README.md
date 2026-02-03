@@ -1,28 +1,21 @@
 # cloudwatch-collector-less-demo
 
-Demo application showing CloudWatch OTLP integration with auto-instrumentation.
+Demo applications showing CloudWatch OTLP integration with auto-instrumentation, without requiring a separate collector.
 
-## Features
+## Overview
 
-- Express.js REST API
-- Winston logging with OpenTelemetry auto-instrumentation
-- CloudWatch OTLP export without collector
+This repository demonstrates how to send telemetry data (traces, metrics, and logs) directly to CloudWatch using OpenTelemetry auto-instrumentation and the OTLP protocol, eliminating the need for a separate collector deployment.
 
-## Setup
+## Demos
 
-```bash
-cd app
-npm install
-npm start
-```
+### [Node.js Demo](./nodejs)
+Express.js REST API with Winston logging and OpenTelemetry auto-instrumentation.
 
-## Dependencies
+### [Java Demo](./java)
+Coming soon - Java application with OpenTelemetry auto-instrumentation.
 
-- `winston` - Logging library
-- `@opentelemetry/winston-transport` - Required for automatic log record export
-- `@aws/aws-distro-opentelemetry-node-autoinstrumentation` - Auto-instrumentation
+## Key Benefits
 
-## Endpoints
-
-- `GET /` - Hello World
-- `GET /health` - Health check
+- **No Collector Required** - Direct OTLP export to CloudWatch
+- **Auto-Instrumentation** - Minimal code changes needed
+- **Unified Observability** - Traces, metrics, and logs in CloudWatch

@@ -88,6 +88,7 @@ export class EcsFargateAppStack extends cdk.Stack {
         OTEL_EXPORTER_OTLP_LOGS_PROTOCOL: 'http/protobuf',
         OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: `https://logs.${region}.amazonaws.com/v1/logs`,
         OTEL_EXPORTER_OTLP_LOGS_HEADERS: `x-aws-log-group=${serviceName}-logs,x-aws-log-stream=default`,
+        OTEL_TRACES_SAMPLER: 'xray',
         OTEL_SERVICE_NAME: serviceName,
         OTEL_RESOURCE_ATTRIBUTES: `service.name=${serviceName}`,
         AWS_REGION: region
@@ -134,13 +135,14 @@ export class EcsFargateAppStack extends cdk.Stack {
         OTEL_LOGS_EXPORTER: 'otlp',
         OTEL_EXPORTER_OTLP_PROTOCOL: 'http/protobuf',
         OTEL_EXPORTER_OTLP_ENDPOINT: 'http://localhost:4318',
+        OTEL_TRACES_SAMPLER: 'xray',
         OTEL_SERVICE_NAME: serviceName,
         OTEL_RESOURCE_ATTRIBUTES: `service.name=${serviceName}`,
         AWS_REGION: region
       }
     })
 
-    // ADOT Collector sidecar
+    // ADOT Collector sidecar with awsproxy for X-Ray remote sampling
     taskDefinition.addContainer('AdotCollector', {
       image: ecs.ContainerImage.fromRegistry(
         'public.ecr.aws/aws-observability/aws-otel-collector:latest'
@@ -151,10 +153,14 @@ export class EcsFargateAppStack extends cdk.Stack {
       }),
       portMappings: [
         { containerPort: 4318 },
-        { containerPort: 4317 }
+        { containerPort: 4317 },
+        { containerPort: 2000 }
       ],
       environment: {
         AOT_CONFIG_CONTENT: JSON.stringify({
+          extensions: {
+            awsproxy: {}
+          },
           receivers: {
             otlp: {
               protocols: {
@@ -171,6 +177,7 @@ export class EcsFargateAppStack extends cdk.Stack {
             }
           },
           service: {
+            extensions: ['awsproxy'],
             pipelines: {
               traces: {
                 receivers: ['otlp'],
